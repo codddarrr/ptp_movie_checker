@@ -1,0 +1,31 @@
+# Use the official Node.js image.
+FROM node:18
+
+# Set environment variable for non-interactive tzdata install
+ENV DEBIAN_FRONTEND=noninteractive
+ENV FORCE_COLOR=1
+ENV TERM=xterm-256color
+
+# Create and change to the app directory.
+WORKDIR /usr/src/app
+
+# Install required packages.
+RUN apt-get update && apt-get install -y \
+  openssl \
+  tzdata
+
+# Set the timezone using the build argument
+ARG TZ=America/Los_Angeles
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Generate a self-signed SSL certificate.
+RUN openssl req -x509 -nodes -days 36500 -newkey rsa:2048 -keyout /etc/ssl/key.pem -out /etc/ssl/cert.pem -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=localhost"
+
+# Copy local code to the container image.
+COPY docker/entrypoint-node.sh /entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /entrypoint.sh
+
+# Run the entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]

@@ -1,0 +1,104 @@
+{{#if assets.pageMissingMovies.css}}
+    <link href="{{assets.pageMissingMovies.css}}" rel="stylesheet">
+{{/if}}
+<script>
+    window.SERVER_DATA = window.SERVER_DATA || {};
+    window.SERVER_DATA.matches = {{{json matches}}};
+</script>
+<div class='card bg-transparent-dark text-light mb-4'>
+    <div class='card-header d-flex justify-content-between align-items-center'>
+        <h1 class="ms-3 me-3 display-3 mb-0">{{title}}</h1>
+        <div class="d-flex justify-content-between align-items-end my-2">
+            <div class="ms-auto">
+                <a href='/' class='btn btn-primary' title='See the installation and configuration instructions'>
+                    <i class='fas fa-code'></i> Configuration
+                </a>
+                <a href='/movies/missing' class='btn btn-success disabled-link'
+                   title='See the movies that are missing from PTP'>
+                    <i class='fas fa-champagne-glasses'></i> Missing Movies
+                </a>
+                <a href='/movies/ignored' class='btn btn-warning'
+                   title="See the movies that you've marked ignored">
+                    <i class='fas fa-not-equal'></i> Ignored Movies
+                </a>
+                <a href='/movies/found' class='btn btn-danger'
+                   title='See the movies that already exist on PTP'>
+                    <i class='fas fa-ban'></i> Found Movies
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class='card-body'>
+        <div class='row mb-3'>
+            <div class='col-md-6 d-flex align-items-center z-index-1'>
+                <div class='form-check form-switch'>
+                    <input class='form-check-input' type='checkbox' id='hideProcessed' role='switch'/>
+                    <label class='form-check-label' for='hideProcessed'>Hide ✔</label>
+                </div>
+                <button
+                        class='btn btn-warning rounded-circle ms-3'
+                        id='checkBannedContent'
+                        title='Check for specifically banned content and release groups.'
+                >
+                    <i class="fas fa-circle-exclamation"></i>
+                </button>
+            </div>
+            <div class='col-md-6 text-md-end'>
+                <div id='datatable-buttons' class='btn-group align-items-'>
+                    <button
+                            class='btn btn-secondary'
+                            id='toggleAllProcessed'
+                            title='Mark / Unmark All As ✔'
+                    >Toggle All ✔
+                    </button>
+                    <button
+                            class='btn btn-warning'
+                            id='moveCheckedToIgnored'
+                            title='Move all ✔ movies to the Ignored list'
+                    >Move ✔ to Ignored
+                    </button>
+                    <button
+                            class='btn btn-danger'
+                            id='checkAllMovies'
+                            title='Recheck All IMDB IDs against PTP, then mark the items that exist on the site as found.'
+                    >
+                        Re-Check & Move to Found
+                    </button>
+                </div>
+                <div class="form-group mt-3 me-0 col-md-4 ms-auto">
+                    <input type="text" id="unicodeInputText" class="form-control mb-3" placeholder="Unicode input">
+                    <input type="text" id="unicodeOutputText" class="form-control" readonly placeholder="Unidecoded output">
+                </div>
+            </div>
+        </div>
+        <div class='table-responsive'>
+            <table id='missingTable' class='table table-striped table-dark'>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>✔</th>
+                    <th><i class='fas fa-pencil-alt'></i></th>
+                    <th>IMDB URL</th>
+                    <th>Tracker URL
+                        <button href="#" id="tracker-url-open" class="btn btn-sm btn-danger z-index-1 ms-3"
+                                title="Open all visible links in new tabs."><i class="fa fa-up-right-from-square"></i>
+                        </button>
+                    </th>
+                    <th>Poster</th>
+                    <th>Title</th>
+                    <th>Year</th>
+                    <th>Tags</th>
+                    <th>AKAs</th>
+                    <th>Plot</th>
+                    <th>Added</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{#if assets.pageMissingMovies.js}}
+    <script src="{{assets.pageMissingMovies.js}}"></script>
+{{/if}}

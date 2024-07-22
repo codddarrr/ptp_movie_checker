@@ -1,0 +1,16 @@
+// Font Awesome configuration
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+
+// Import Bootstrap
+@import "~bootstrap/scss/bootstrap";
+
+// Import Font Awesome
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+
+// Import other libraries
+@import "~highlight.js/scss/monokai-sublime";
+@import "~izitoast/dist/css/iziToast.css";
+
+// Import custom styles
+@import "custom";

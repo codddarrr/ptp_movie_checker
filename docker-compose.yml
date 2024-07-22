@@ -1,0 +1,37 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nginx
+    ports:
+      - "443:443"
+    environment:
+      - PROXY_DOMAINS=${PROXY_DOMAINS}
+      - APP_PORT=${APP_PORT:-3000}
+      - APP_DOMAIN=${APP_DOMAIN}
+    depends_on:
+      - node
+    volumes:
+      - ssl:/etc/ssl
+
+  node:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.node
+    expose:
+      - "${APP_PORT:-3000}"
+    environment:
+      - TZ=${TZ}
+      - API_USER=${API_USER}
+      - API_KEY=${API_KEY}
+      - APP_PORT=${APP_PORT:-3000}
+      - PROXY_DOMAINS=${PROXY_DOMAINS}
+      - PTPIMG_API_KEY=${PTPIMG_API_KEY}
+    env_file:
+      - .env
+    volumes:
+      - ./src:/usr/src/app/src
+      - ssl:/etc/ssl
+
+volumes:
+  ssl:
