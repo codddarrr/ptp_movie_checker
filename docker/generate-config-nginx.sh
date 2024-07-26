@@ -28,31 +28,37 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header Accept-Encoding "";
+
+        # Increase proxy buffer size
+        proxy_buffers 16 32k;
+        proxy_buffer_size 64k;
 
         # Prevent following redirects
         proxy_redirect ~^(https?://)${original_hostname}(/.+)$ \$1${proxy_domain}\$2;
 
-        # Remove all CSP headers
+        # Remove security headers
         proxy_hide_header Content-Security-Policy;
         proxy_hide_header Content-Security-Policy-Report-Only;
-        proxy_hide_header X-Frame-Options;
+        proxy_hide_header Referrer-Policy;
+        proxy_hide_header Strict-Transport-Security;
         proxy_hide_header X-Content-Type-Options;
+        proxy_hide_header X-Frame-Options;
+        proxy_hide_header X-XSS-Protection;
 
-        # Add permissive CSP header
-        add_header Content-Security-Policy "default-src * data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval' 'unsafe-dynamic';" always;
+        # Remove Cloudflare headers
+        proxy_hide_header CF-Cache-Status;
+        proxy_hide_header Report-To;
+        proxy_hide_header NEL;
+        proxy_hide_header CF-RAY;
+        proxy_hide_header alt-svc;
 
         # Remove CORS headers
         proxy_hide_header Access-Control-Allow-Origin;
         proxy_hide_header Access-Control-Allow-Methods;
         proxy_hide_header Access-Control-Allow-Headers;
         proxy_hide_header Access-Control-Allow-Credentials;
-
-        # Add permissive CORS headers
-        add_header 'Access-Control-Allow-Origin' '*' always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE' always;
-        add_header 'Access-Control-Allow-Headers' '*' always;
-        add_header 'Access-Control-Allow-Credentials' 'true' always;
-        add_header 'Access-Control-Expose-Headers' '*' always;
+        proxy_hide_header Access-Control-Expose-Headers;
 
         # Handle preflight requests
         if (\$request_method = 'OPTIONS') {
@@ -78,6 +84,7 @@ server {
         sub_filter ${original_hostname} ${proxy_domain};
         sub_filter 'https://${target_domain}' 'https://${proxy_domain}';
         sub_filter 'http://${target_domain}' 'https://${proxy_domain}';
+        sub_filter_last_modified off;
         sub_filter_once off;
 
         # Prevent caching
